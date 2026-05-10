@@ -148,7 +148,7 @@ async function main() {
   const ws = new WebSocketClass(gatewayUrl);
 
   ws.addEventListener("open", () => {
-    emit("progress", { text: "等待认证..." });
+    emit("status", { text: "等待认证..." });
   });
 
   ws.addEventListener("error", () => {
@@ -217,7 +217,7 @@ async function main() {
           idempotencyKey: `obsidian-${Date.now()}-${Math.random().toString(16).slice(2)}`,
         });
         activeRunId = result?.runId || "";
-        emit("progress", { text: "OpenClaw 已开始生成..." });
+        emit("status", { text: "OpenClaw 已开始生成..." });
       } catch (error) {
         finish(ws, 1, { message: error.message });
       }

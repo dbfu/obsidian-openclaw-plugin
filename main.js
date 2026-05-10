@@ -150,8 +150,10 @@ module.exports = class OpenClawCommandPlugin extends Plugin {
             continue;
           }
 
-          if (event.type === "progress") {
-            onProgress?.(event.text || "");
+          if (event.type === "status") {
+            onProgress?.(event.text || "", { type: "status" });
+          } else if (event.type === "progress") {
+            onProgress?.(event.text || "", { type: "progress" });
           } else if (event.type === "final") {
             finish(null, event.text || "");
           } else if (event.type === "error") {
@@ -295,25 +297,32 @@ class InstructionModal extends Modal {
     const prompt = buildPrompt(instruction, selectedText);
 
     let latestText = "";
-    let renderedText = "";
+    let renderedLen = 0;
+    let hasStreamedText = false;
     let flushTimer = null;
 
     const flush = () => {
       flushTimer = null;
-      if (latestText === renderedText) return;
-
-      if (latestText.startsWith(renderedText)) {
-        const delta = latestText.slice(renderedText.length);
+      if (latestText.length > renderedLen) {
+        if (!hasStreamedText) {
+          responseEl.empty();
+          hasStreamedText = true;
+        }
+        const delta = latestText.slice(renderedLen);
+        renderedLen = latestText.length;
         responseEl.appendChild(document.createTextNode(delta));
-      } else {
-        responseEl.setText(latestText);
+        responseEl.scrollTop = responseEl.scrollHeight;
       }
-      renderedText = latestText;
-      responseEl.scrollTop = responseEl.scrollHeight;
     };
 
     try {
-      const result = await this.plugin.runOpenClaw(prompt, sessionId, (message) => {
+      const result = await this.plugin.runOpenClaw(prompt, sessionId, (message, event) => {
+        if (event?.type === "status") {
+          if (!hasStreamedText) {
+            responseEl.setText(message);
+          }
+          return;
+        }
         latestText = message;
         if (!flushTimer) {
           flushTimer = setTimeout(flush, 60);
