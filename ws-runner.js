@@ -148,7 +148,7 @@ async function main() {
   const ws = new WebSocketClass(gatewayUrl);
 
   ws.addEventListener("open", () => {
-    emit("progress", { text: "已连接 Gateway，等待认证挑战..." });
+    emit("progress", { text: "等待认证..." });
   });
 
   ws.addEventListener("error", () => {
