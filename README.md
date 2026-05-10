@@ -3,7 +3,32 @@
 This plugin adds commands that send the current selection or an instruction to OpenClaw and insert the final response into the active Markdown note.
 It uses the local Gateway WebSocket API so the temporary block can show streaming assistant output while OpenClaw is running.
 
-## Install locally
+## Install automatically
+
+Open this repository in Claude Code, Codex, or another local coding agent, then ask:
+
+```text
+Install this Obsidian plugin into my local Obsidian vault.
+Find my vault, copy the plugin files into .obsidian/plugins/openclaw-command,
+install runtime dependencies, and enable the plugin in community-plugins.json.
+```
+
+The agent should:
+
+1. Find the user's Obsidian vault by locating a `.obsidian` directory.
+2. Ask which vault to use if multiple vaults are found.
+3. Create `<vault>/.obsidian/plugins/openclaw-command/`.
+4. Copy only these files into that directory:
+   - `main.js`
+   - `ws-runner.js`
+   - `manifest.json`
+   - `styles.css`
+   - `package.json`
+5. Run `npm install --omit=dev` inside the target plugin directory.
+6. Add `"openclaw-command"` to `<vault>/.obsidian/community-plugins.json` if it is not already present.
+7. Ask the user to reload Obsidian with `Cmd+R` or restart Obsidian.
+
+## Install manually
 
 Create the plugin directory in your vault and copy only the plugin files:
 
