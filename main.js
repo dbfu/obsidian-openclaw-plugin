@@ -234,6 +234,18 @@ function extractOpenClawText(result) {
   return text || JSON.stringify(result, null, 2);
 }
 
+function advanceCursor(cursor, text) {
+  const lines = text.split("\n");
+  if (lines.length === 1) {
+    return { line: cursor.line, ch: cursor.ch + text.length };
+  }
+
+  return {
+    line: cursor.line + lines.length - 1,
+    ch: lines[lines.length - 1].length,
+  };
+}
+
 class InstructionModal extends Modal {
   constructor(app, plugin, editor, autoSend = false) {
     super(app);
@@ -337,8 +349,12 @@ class InstructionModal extends Modal {
 
       const finalText = (text || latestText).trim();
       const cursor = insertAtSelectionEnd || this.editor.getCursor();
-      const insertedText = insertAtSelectionEnd ? `\n${finalText}\n` : `\n\n${finalText}\n`;
+      const prefix = insertAtSelectionEnd ? "\n" : "\n\n";
+      const insertedText = `${prefix}${finalText}\n`;
+      const selectionStart = advanceCursor(cursor, prefix);
+      const selectionEnd = advanceCursor(selectionStart, finalText);
       this.editor.replaceRange(insertedText, cursor);
+      this.editor.setSelection(selectionStart, selectionEnd);
       new Notice("OpenClaw result inserted.");
 
       setTimeout(() => this.close(), 600);
