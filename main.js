@@ -295,17 +295,21 @@ class InstructionModal extends Modal {
     const prompt = buildPrompt(instruction, selectedText);
 
     let latestText = "";
-    let renderedLen = 0;
+    let renderedText = "";
     let flushTimer = null;
 
     const flush = () => {
       flushTimer = null;
-      if (latestText.length > renderedLen) {
-        const delta = latestText.slice(renderedLen);
-        renderedLen = latestText.length;
+      if (latestText === renderedText) return;
+
+      if (latestText.startsWith(renderedText)) {
+        const delta = latestText.slice(renderedText.length);
         responseEl.appendChild(document.createTextNode(delta));
-        responseEl.scrollTop = responseEl.scrollHeight;
+      } else {
+        responseEl.setText(latestText);
       }
+      renderedText = latestText;
+      responseEl.scrollTop = responseEl.scrollHeight;
     };
 
     try {
