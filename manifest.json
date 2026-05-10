@@ -1,0 +1,9 @@
+{
+  "id": "openclaw-command",
+  "name": "OpenClaw Command",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Send the current note or selection to OpenClaw and insert the result into the active note.",
+  "author": "OpenClaw Demo",
+  "isDesktopOnly": true
+}
