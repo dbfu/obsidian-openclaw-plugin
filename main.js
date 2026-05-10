@@ -283,6 +283,9 @@ class InstructionModal extends Modal {
     const responseEl = this.outputArea.createEl("div", { cls: "openclaw-response" });
 
     const selectedText = this.editor.getSelection() || "";
+    const insertAtSelectionEnd = this.autoSend && selectedText.trim()
+      ? this.editor.getCursor("to")
+      : null;
     if (!instruction && !selectedText.trim()) {
       responseEl.setText("没有选中文本，也没有输入指令。");
       return;
@@ -319,8 +322,10 @@ class InstructionModal extends Modal {
         responseEl.setText(text);
       }
 
-      const cursor = this.editor.getCursor();
-      this.editor.replaceRange(`\n\n${(text || latestText).trim()}\n`, cursor);
+      const finalText = (text || latestText).trim();
+      const cursor = insertAtSelectionEnd || this.editor.getCursor();
+      const insertedText = insertAtSelectionEnd ? `\n${finalText}\n` : `\n\n${finalText}\n`;
+      this.editor.replaceRange(insertedText, cursor);
       new Notice("OpenClaw result inserted.");
 
       setTimeout(() => this.close(), 600);

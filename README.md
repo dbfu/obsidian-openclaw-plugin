@@ -53,7 +53,9 @@ Then enable `OpenClaw Command` in Obsidian community plugins.
 - `OpenClaw Command: Ask OpenClaw with instruction`
 - `OpenClaw Command: Clear OpenClaw context for current note`
 
-The second command opens a prompt where you can enter an instruction such as:
+The selection command sends the selected text to OpenClaw and inserts the final response on the line immediately after the selected text.
+
+The ask command opens a prompt where you can enter an instruction such as:
 
 ```text
 总结这篇文章，并提取待办事项
